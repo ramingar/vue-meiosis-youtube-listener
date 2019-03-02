@@ -6,7 +6,7 @@
         <v-flex shrink>
             <v-expand-x-transition>
                 <div v-show="infoPanel" style="white-space: nowrap">
-                    <ResultsInfo/>
+                    <results-info/>
                 </div>
             </v-expand-x-transition>
         </v-flex>
