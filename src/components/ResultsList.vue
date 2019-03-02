@@ -1,20 +1,27 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <v-list two-line>
-        <template v-for="(item, index) in items">
+        <template v-for="(item, key) in items">
             <v-subheader v-if="item.header" :key="item.header">
                 {{ item.header }}
             </v-subheader>
 
-            <v-divider :inset="item.inset"></v-divider>
+            <v-divider :inset="item.inset" :key="`divider-${key}`"></v-divider>
 
-            <v-list-tile v-if="item.title" :key="item.title" avatar @click="">
-                <v-list-tile-avatar>
-                    <img :src="item.avatar">
+            <v-list-tile v-if="item.snippet" :key="key" avatar @click="setActive(item)">
+                <v-list-tile-avatar @click="showPlayer">
+                    <img src="../assets/button-play.png">
                 </v-list-tile-avatar>
 
                 <v-list-tile-content @click="showInfoPanel">
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                    <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
+                    <v-list-tile-title>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{on}">
+                                <span v-on="on">{{formatText(item.snippet.title)}}</span>
+                            </template>
+                            <span>{{item.snippet.title}}</span>
+                        </v-tooltip>
+                    </v-list-tile-title>
+                    <v-list-tile-sub-title>{{formatText(item.snippet.channelTitle)}}</v-list-tile-sub-title>
                 </v-list-tile-content>
             </v-list-tile>
         </template>
@@ -22,35 +29,24 @@
 </template>
 
 <script>
-    import {actions} from '../meiosis'
+    import {actions, state} from '../meiosis'
+    import {ellipsis} from '../helpers/strings'
 
     export default {
-        name      : 'ResultsList',
+        name    : 'ResultsList',
         data() {
             return {
-                items     : [
-                    {header: 'Results!!'},
-                    {
-                        avatar  : 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-                        title   : 'Brunch this weekend?',
-                        subtitle: "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
-                    },
-                    {
-                        avatar  : 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-                        title   : 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
-                        subtitle: "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.",
-                    },
-                    {
-                        avatar  : 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-                        title   : 'Oui oui',
-                        subtitle: "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?",
-                    },
-
-                ]
+                reactivity: state
             }
         },
-        methods   : {
-            showInfoPanel: () => actions.showInfo(true)
+        computed: {
+            items: () => ([{header: 'Results!!'}, ...state.results])
+        },
+        methods : {
+            showInfoPanel: () => actions.showInfo(true),
+            showPlayer   : () => actions.togglePlayer(true),
+            setActive    : actions.setActive,
+            formatText   : text => [text].filter(val => val).map(ellipsis(70))[0]
         }
     }
 </script>

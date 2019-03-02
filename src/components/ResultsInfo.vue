@@ -1,19 +1,19 @@
 <template>
-    <v-card elevation="0">
-        <v-img class="white--text" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+    <v-card elevation="0" width="20rem">
+        <v-img class="white--text" height="200px" :src="imageSrc">
             <v-container fill-height fluid>
                 <v-layout fill-height>
                     <v-flex xs12 align-end flexbox>
-                        <span class="headline">My favorite info song</span>
+                        <span class="headline">{{(activeElement.snippet || {}).title}}</span>
                     </v-flex>
                 </v-layout>
             </v-container>
         </v-img>
         <v-card-title>
             <div class="text-xs-center">
-                <span class="grey--text">My favorite info song</span><br>
-                <span>This is the owner's name</span><br>
-                <span>Some extra info to add </span>
+                <span class="grey--text">{{(activeElement.snippet || {}).title}}</span><br>
+                <span>{{(activeElement.snippet || {}).channelTitle}}</span><br>
+                <span>{{(activeElement.snippet || {}).description}}</span>
             </div>
         </v-card-title>
         <v-card-actions>
@@ -23,14 +23,18 @@
 </template>
 
 <script>
-    import {actions} from '../meiosis'
+    import {actions, state} from '../meiosis'
 
     export default {
-        name   : 'ResultsInfo',
-        data   : () => ({
-            expand: false
+        name    : 'ResultsInfo',
+        data    : () => ({
+            reactivity: state
         }),
-        methods: {
+        computed: {
+            activeElement: () => state.activeElement,
+            imageSrc     : () => ((((state.activeElement || {}).snippet || {}).thumbnails || {}).medium || {}).url
+        },
+        methods : {
             hideInfoPanel: () => actions.showInfo(false)
         }
     }

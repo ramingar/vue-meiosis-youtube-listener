@@ -5,7 +5,7 @@
         </v-flex>
         <v-flex shrink>
             <v-expand-x-transition>
-                <div v-show="infoPanel" style="white-space: nowrap">
+                <div v-show="infoPanel" style="position: fixed; right: 0;">
                     <results-info/>
                 </div>
             </v-expand-x-transition>

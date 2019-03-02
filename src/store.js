@@ -1,12 +1,17 @@
 const state = {
-    showPlayer: false,
-    showInfo  : false
+    showPlayer   : false,
+    showInfo     : false,
+    activeElement: {},
+    results      : []
 };
 
 const actions = update => {
-    const togglePlayer = () => update({showPlayer: !state.showPlayer});
+    const togglePlayer = show => update({showPlayer: show});
     const showInfo     = show => update({showInfo: show});
-    return {togglePlayer, showInfo}
+    const setResults   = _results => update({results: _results});
+    const setActive    = element => update({activeElement: element});
+
+    return {togglePlayer, showInfo, setResults, setActive}
 };
 
 const store = {
