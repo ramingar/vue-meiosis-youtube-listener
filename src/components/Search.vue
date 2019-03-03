@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap>
-        <v-text-field label="Type something to search..." v-model="term" @keyup.enter="search(term)"/>
+        <v-text-field label="Type something to search and press <Enter>..." v-model="term" @keyup.enter="search(term)"/>
     </v-layout>
 </template>
 

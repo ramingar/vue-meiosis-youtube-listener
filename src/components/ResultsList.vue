@@ -40,7 +40,7 @@
             }
         },
         computed: {
-            items: () => ([{header: 'Results!!'}, ...state.results])
+            items: () => ([{header: 'Results will appear here'}, ...state.results])
         },
         methods : {
             showInfoPanel: () => actions.showInfo(true),
