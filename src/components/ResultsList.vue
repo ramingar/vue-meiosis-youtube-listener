@@ -2,15 +2,18 @@
     <v-list two-line>
         <template v-for="(item, key) in items">
             <v-subheader v-if="item.header" :key="item.header">
-                {{ item.header }}
+                {{ items.length > 1 ? 'Results' : item.header }}
             </v-subheader>
 
             <v-divider :inset="item.inset" :key="`divider-${key}`"></v-divider>
 
             <v-list-tile v-if="item.snippet" :key="key" avatar @click="setActive(item)">
-                <v-list-tile-avatar @click="() => {showPlayer(); showInfoPanel()}">
-                    <img src="../assets/button-play.png">
-                </v-list-tile-avatar>
+
+                <v-list-tile-action @click="() => {showPlayer(); showInfoPanel(); setPlayingSong(item)}">
+                    <v-btn icon>
+                        <v-icon>play_circle_outline</v-icon>
+                    </v-btn>
+                </v-list-tile-action>
 
                 <v-list-tile-content @click="showInfoPanel">
                     <v-list-tile-title>
@@ -43,10 +46,11 @@
             items: () => ([{header: 'Results will appear here'}, ...state.results])
         },
         methods : {
-            showInfoPanel: () => actions.showInfo(true),
-            showPlayer   : () => actions.togglePlayer(true),
-            setActive    : actions.setActive,
-            formatText   : text => [text].filter(val => val).map(ellipsis(70))[0]
+            showInfoPanel : () => actions.showInfo(true),
+            showPlayer    : () => actions.togglePlayer(true),
+            setActive     : actions.setActive,
+            setPlayingSong: actions.setPlaying,
+            formatText    : text => [text].filter(val => val).map(ellipsis(70))[0]
         }
     }
 </script>

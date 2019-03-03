@@ -10,9 +10,9 @@
                 <v-list>
                     <v-list-tile>
                         <v-list-tile-content>
-                            <v-list-tile-title>{{formatText((activeElement.snippet || {}).title)}}</v-list-tile-title>
+                            <v-list-tile-title>{{formatText((playing.snippet || {}).title)}}</v-list-tile-title>
                             <v-list-tile-sub-title>
-                                {{formatText((activeElement.snippet || {}).channelTitle)}}
+                                {{formatText((playing.snippet || {}).channelTitle)}}
                             </v-list-tile-sub-title>
                         </v-list-tile-content>
 
@@ -25,20 +25,22 @@
                             </v-btn>
                         </v-list-tile-action>
 
-                        <v-list-tile-action v-if="true" :class="{ 'mr-3': $vuetify.breakpoint.mdAndUp }">
+                        <v-list-tile-action v-if="!currentlyPlaying" :class="{ 'mr-3': $vuetify.breakpoint.mdAndUp }"
+                                            @click="playVideo">
                             <v-btn icon>
                                 <v-icon>play_arrow</v-icon>
                             </v-btn>
                         </v-list-tile-action>
 
-                        <v-list-tile-action v-if="false" :class="{ 'mr-3': $vuetify.breakpoint.mdAndUp }">
+                        <v-list-tile-action v-if="currentlyPlaying" :class="{ 'mr-3': $vuetify.breakpoint.mdAndUp }"
+                                            @click="pauseVideo">
                             <v-btn icon>
                                 <v-icon>pause</v-icon>
                             </v-btn>
                         </v-list-tile-action>
 
                         <v-list-tile-action :class="{ 'mr-3': $vuetify.breakpoint.mdAndUp }"
-                                            @click="() => {hidePlayer(); hideInfo()}">
+                                            @click="() => {hidePlayer(); hideInfo(); stopVideo(); clearPlaying()}">
                             <v-btn icon>
                                 <v-icon>stop</v-icon>
                             </v-btn>
@@ -54,6 +56,12 @@
                 </v-list>
             </v-card>
         </v-bottom-sheet>
+        <youtube :video-id="videoId" ref="youtube"
+                 :player-vars="playerVars"
+                 @playing="toggleCurrentlyPlaying(true)"
+                 @paused="toggleCurrentlyPlaying(false)"
+                 @ended="toggleCurrentlyPlaying(false)"
+                 style="display:none;"/>
     </div>
 </template>
 
@@ -66,25 +74,47 @@
         name    : 'Player',
         data() {
             return {
-                reactivity: state   // make state reactive in vue template
+                reactivity      : state,   // make state reactive in vue template
+                playerVars      : {
+                    autoplay: 1
+                },
+                currentlyPlaying: false
             }
         },
         computed: {
             showPlayer       : () => state.showPlayer,
             activeElement    : () => state.activeElement,
-            nextAvailable    : () => currentIndex(state.results)(state.activeElement) < state.results.length - 1,
-            previousAvailable: () => currentIndex(state.results)(state.activeElement) > 0
+            playing          : () => state.playing,
+            nextAvailable    : () => currentIndex(state.results)(state.playing) < state.results.length - 1,
+            previousAvailable: () => currentIndex(state.results)(state.playing) > 0,
+            player() {
+                return this.$refs.youtube.player
+            },
+            videoId          : () => Object.assign({}, (state.playing.id || {})).videoId || '',
         },
         methods : {
             formatText  : text => [text].filter(val => val).map(ellipsis(80))[0],
             hidePlayer  : () => actions.togglePlayer(false),
             hideInfo    : () => actions.showInfo(false),
-            nextSong    : () => actions.setActive(
-                state.results[currentIndex(state.results)(state.activeElement) + 1]
+            nextSong    : () => actions.setPlaying(
+                state.results[currentIndex(state.results)(state.playing) + 1]
             ),
-            previousSong: () => actions.setActive(
-                state.results[currentIndex(state.results)(state.activeElement) - 1]
-            )
+            clearPlaying: () => actions.setPlaying({}),
+            previousSong: () => actions.setPlaying(
+                state.results[currentIndex(state.results)(state.playing) - 1]
+            ),
+            toggleCurrentlyPlaying(value) {
+                this.currentlyPlaying = value;
+            },
+            stopVideo() {
+                this.player.stopVideo()
+            },
+            playVideo() {
+                this.player.playVideo()
+            },
+            pauseVideo() {
+                this.player.pauseVideo()
+            }
         },
         watch   : {
             showPlayer: () => document.querySelector('#show-player').click()
