@@ -8,7 +8,7 @@
             <v-divider :inset="item.inset" :key="`divider-${key}`"></v-divider>
 
             <v-list-tile v-if="item.snippet" :key="key" avatar @click="setActive(item)">
-                <v-list-tile-avatar @click="showPlayer">
+                <v-list-tile-avatar @click="() => {showPlayer(); showInfoPanel()}">
                     <img src="../assets/button-play.png">
                 </v-list-tile-avatar>
 
