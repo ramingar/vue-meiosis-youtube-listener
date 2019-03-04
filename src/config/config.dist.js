@@ -1,14 +1,16 @@
 const apiKey            = '~';
 const maxResults        = 50;
-const part              = 'snippet';
-const type              = 'video';
-const apiYoutubebaseUrl = 'https://www.googleapis.com/youtube/v3/search';
+const partSearch        = 'snippet';
+const partInfoVideo     = 'contentDetails';
+const typeSearch        = 'video';
+const apiYoutubebaseUrl = 'https://www.googleapis.com/youtube/v3';
 
 export default {
     api: {
         youtube: {
             apiKey,
-            baseUrl: `${apiYoutubebaseUrl}?key=${apiKey}&part=${part}&type=${type}&maxResults=${maxResults}&q=`
+            urlSearch   : `${apiYoutubebaseUrl}/search?key=${apiKey}&part=${partSearch}&type=${typeSearch}&maxResults=${maxResults}&q=`,
+            urlInfoVideo: `${apiYoutubebaseUrl}/videos?key=${apiKey}&part=${partInfoVideo}&id=`
         }
     }
 }
