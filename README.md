@@ -1,5 +1,13 @@
 # vue-meiosis-youtube-listener
 
+Made with purposes of having fun to test Meiosis in a Electron+Vue application.
+It's a youtube listener.
+
+![App's screenshot](https://raw.githubusercontent.com/ramingar/files-for-projects-or-gists/master/img/vue-meiosis-youtube-listener.png)
+
+
+
+
 ## Project setup
 ```
 npm install
